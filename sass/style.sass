@@ -1,0 +1,124 @@
+@import "reset"
+@import "font"
+@import "simple-typography/style"
+
+$color-shadow: #CCC
+$color-text-subdued: #666
+
+$content-width: 60rem 
+
+@mixin boxShadow
+  box-shadow: 5px 5px 10px 5px $color-shadow
+
+.header
+  height: 20em
+  background-image: url("/images/bg.jpg") 
+  background-size: cover
+  background-position: bottom
+
+  display: flex
+  align-items: flex-end
+  justify-content: flex-end
+  h1
+    color: white
+    font-size: 2.5rem
+    text-shadow: 1px 1px 2px #999
+    padding-right: 1rem
+    margin-bottom: 0
+
+.navigation
+  box-shadow: 0 5px 5px 1px #DDD
+  display: flex
+  justify-content: center
+  margin: 0 0 1.5em 0
+
+  > ul
+    margin: 0
+    width: $content-width
+    display: flex
+    font-size: 1.5em
+
+    li
+      list-style: none
+      margin: 0
+    a
+      text-decoration: none
+  
+
+  .languageSwitcher:hover ul
+    display: block
+
+  .languageSwitcher
+    font-size: 0.7em
+    position: absolute
+    right: 1em
+    ul
+      display: none
+      position: absolute
+      bottom: -3em
+      margin: 0
+
+    ul:hover
+      display: block
+
+.footer
+  ul
+    display: flex
+    justify-content: center
+    margin: 2em 0 0 0
+    padding: 0
+    li
+      list-style: none
+  img
+    width: 2em
+
+.articleIndex
+  display: flex
+  flex-direction: column
+  align-items: center
+  :nth-child(odd) 
+    flex-direction: row-reverse
+  .articleTeaser
+    width: $content-width
+    min-height: 15rem
+    margin-bottom: 2em
+    +boxShadow
+    
+    
+    display: flex
+    > *
+      flex: 1
+
+    @media (max-width: 600px)
+      width: 100%
+      flex-direction: column
+
+      .teaserImg
+        height: 15rem
+      > *
+        flex: initial
+
+    h2
+      font-size: 1.2rem
+    .teaserImg
+      background-size: cover
+    .excerpt > *
+      padding: 1em
+    .postedOn
+      font-size: 0.7em
+      color: $color-text-subdued
+      text-align: right
+      margin: 0
+    h2
+      margin-top: 0
+
+.articlePage
+  .content
+    margin: auto
+    max-width: $content-width
+
+    .postedOn
+      font-size: 0.8em
+      color: $color-text-subdued
+      text-align: right
+      margin: 0
