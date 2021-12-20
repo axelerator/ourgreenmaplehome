@@ -1,16 +1,17 @@
 module Page.Index exposing (Data, Model, Msg, page)
 
-import Article exposing (ArticleMetaData, languageToString)
+import Article exposing (Article, ArticleContent, ArticleMetaData, languageToString)
 import DataSource exposing (DataSource)
 import Head
 import Head.Seo as Seo
 import Html exposing (Html, div, span, text)
-import Language exposing (Language)
+import Html.Attributes exposing (class)
+import Language exposing (Language(..))
 import List exposing (map)
 import Page exposing (Page, StaticPayload)
 import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
-import Shared
+import Shared exposing (navigation)
 import View exposing (View)
 
 
@@ -35,9 +36,13 @@ page =
         |> Page.buildNoState { view = view }
 
 
+type alias Data =
+    List ( Article, ArticleContent )
+
+
 data : DataSource Data
 data =
-    Article.articleMetaData
+    Article.articlesIn English
 
 
 head :
@@ -60,17 +65,13 @@ head static =
         |> Seo.website
 
 
-type alias Data =
-    List ArticleMetaData
-
-
 view :
     Maybe PageUrl
     -> Shared.Model
     -> StaticPayload Data RouteParams
     -> View Msg
 view maybeUrl sharedModel static =
-    { title = "Index"
+    { title = "BlogArticles in English"
     , body = body static
     }
 
@@ -78,11 +79,10 @@ view maybeUrl sharedModel static =
 body : StaticPayload Data RouteParams -> List (Html Msg)
 body static =
     let
-        tt : String -> Language -> Html Msg
-        tt slug l =
-            span [] <| map text [ languageToString l, "/", slug ]
-
-        ttt amd =
-            div [] (map (tt amd.slug) amd.languages)
+        otherLanguages =
+            List.map (\l -> ( l, Shared.homeForLanguage l ))
+                (Language.otherLanguages English)
     in
-    map ttt static.data
+    [ navigation English otherLanguages
+    , div [ class "articleIndex" ] <| List.map Shared.articleTeaser static.data
+    ]

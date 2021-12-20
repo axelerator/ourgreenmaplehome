@@ -1,8 +1,8 @@
-module Shared exposing (Data, Model, Msg(..), SharedMsg(..), articleTeaser, homeForLanguage, homeInOtherLanguages, link, navigation, template, toArticleRoute)
+module Shared exposing (ArticleIndex, Data, Model, Msg(..), SharedMsg(..), articleTeaser, homeForLanguage, homeInOtherLanguages, link, navigation, template, toArticleRoute)
 
-import Article exposing (Article, ArticleContent, languageToString)
+import Article exposing (Article, ArticleContent, ArticleMetaData, languageToString)
 import Browser.Navigation
-import DataSource
+import DataSource exposing (DataSource)
 import Date
 import Html exposing (Attribute, Html, a, div, h1, h2, img, li, p, text, ul)
 import Html.Attributes exposing (alt, class, classList, href, src, style)
@@ -37,7 +37,12 @@ type Msg
 
 
 type alias Data =
-    ()
+    List ( Article, ArticleContent )
+
+
+data : DataSource Data
+data =
+    Article.articlesIn English
 
 
 type SharedMsg
@@ -95,11 +100,6 @@ subscriptions _ _ =
     Sub.none
 
 
-data : DataSource.DataSource Data
-data =
-    DataSource.succeed ()
-
-
 view :
     Data
     ->
@@ -143,7 +143,7 @@ homeForLanguage : Language -> Route
 homeForLanguage language =
     case language of
         English ->
-            En
+            Index
 
         German ->
             De
@@ -224,3 +224,7 @@ articleTeaser ( article, content ) =
                 ]
             ]
         ]
+
+
+type alias ArticleIndex =
+    List ( Article, ArticleContent )
