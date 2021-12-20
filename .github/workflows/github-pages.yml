@@ -18,7 +18,7 @@ jobs:
       - run: npm run build
       - run: mv dist docs
       - run: touch docs/.nojekyll
-      - run: echo www.ourgreenmaplehome.blog > CNAME
+      - run: echo "www.ourgreenmaplehome.blog" > docs/CNAME
       -
         name: Deploy to GitHub Pages
         if: success()
