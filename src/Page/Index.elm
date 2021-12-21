@@ -1,6 +1,7 @@
 module Page.Index exposing (Data, Model, Msg, page)
 
 import Article exposing (Article, ArticleContent, ArticleMetaData, languageToString)
+import Browser.Navigation
 import DataSource exposing (DataSource)
 import Head
 import Head.Seo as Seo
@@ -11,6 +12,7 @@ import List exposing (map)
 import Page exposing (Page, StaticPayload)
 import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
+import Path exposing (Path)
 import Shared exposing (navigation)
 import View exposing (View)
 
@@ -33,7 +35,27 @@ page =
         { head = head
         , data = data
         }
-        |> Page.buildNoState { view = view }
+        |> Page.buildWithLocalState
+            { view = view
+            , init = init
+            , update = update
+            , subscriptions = subscriptions
+            }
+
+
+init : Maybe PageUrl -> Shared.Model -> StaticPayload Data RouteParams -> ( Model, Cmd Msg )
+init _ _ _ =
+    ( (), Cmd.none )
+
+
+update : PageUrl -> Maybe Browser.Navigation.Key -> Shared.Model -> StaticPayload Data RouteParams -> Msg -> Model -> ( Model, Cmd Msg )
+update _ _ _ _ _ model =
+    ( model, Cmd.none )
+
+
+subscriptions : Maybe PageUrl -> RouteParams -> Path -> Model -> Sub Msg
+subscriptions _ _ _ _ =
+    Sub.none
 
 
 type alias Data =
@@ -68,9 +90,10 @@ head static =
 view :
     Maybe PageUrl
     -> Shared.Model
+    -> Model
     -> StaticPayload Data RouteParams
     -> View Msg
-view maybeUrl sharedModel static =
+view maybeUrl sharedModel model static =
     { title = "BlogArticles in English"
     , body = body static
     }
