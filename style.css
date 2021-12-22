@@ -1,0 +1,478 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, code, em, img, small, strike, strong, sub, sup, tt, b, u, i, ol, ul, li, fieldset, form, label, table, caption, tbody, tfoot, thead, tr, th, td, main, canvas, embed, footer, header, nav, section, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: none;
+}
+
+footer, header, nav, section, main {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+input {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
+@font-face {
+  font-family: "Martel";
+  font-style: normal;
+  font-weight: 200;
+  src: url(fonts/Martel-ExtraLight.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Martel";
+  font-style: normal;
+  font-weight: 300;
+  src: url(fonts/Martel-Light.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Martel";
+  font-style: normal;
+  font-weight: 400;
+  src: url(fonts/Martel-Regular.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Martel";
+  font-style: normal;
+  font-weight: 600;
+  src: url(fonts/Martel-SemiBold.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Martel";
+  font-style: normal;
+  font-weight: 700;
+  src: url(fonts/Martel-Bold.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Martel";
+  font-style: normal;
+  font-weight: 800;
+  src: url(fonts/Martel-ExtraBold.ttf) format("truetype");
+}
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/*------------------------------------*\
+    # Simple Typography Settings
+\*------------------------------------*/
+/*------------------------------------*\
+    # Type
+\*------------------------------------*/
+*, html, body {
+  font-size: 16px;
+  font-family: "Martel", serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 36px;
+  color: #000000;
+  line-height: 1.25em;
+  font-weight: 700;
+}
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 24px;
+}
+
+h2 {
+  font-size: 1.9230769231rem;
+  margin-bottom: 18.4615384615px;
+}
+
+h3 {
+  font-size: 1.6666666667rem;
+  margin-bottom: 16px;
+}
+
+h4 {
+  font-size: 1.4705882353rem;
+  margin-bottom: 14.1176470588px;
+}
+
+h5 {
+  font-size: 1.3888888889rem;
+  margin-bottom: 13.3333333333px;
+}
+
+h6 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+}
+
+p {
+  margin-bottom: 20px;
+  font-size: 1.0625rem;
+  line-height: 1.5em;
+  color: #505050;
+}
+p:last-of-type {
+  margin-bottom: 0;
+}
+
+a {
+  color: #459bd9;
+  transition: all 0.2s ease;
+}
+a:hover {
+  color: #1f6699;
+}
+
+ul,
+ol {
+  margin: 20px 0 0 20px;
+}
+ul li,
+ol li {
+  margin-top: 10px;
+  line-height: 1.5em;
+  color: #505050;
+}
+ul ul,
+ul ol,
+ol ul,
+ol ol {
+  margin-top: 0;
+}
+
+ul li {
+  list-style: disc;
+}
+ul ul li {
+  list-style: circle;
+}
+
+ol li {
+  list-style: decimal;
+}
+
+hr {
+  height: 1px;
+  margin: 30px 0;
+  border: none;
+  background-color: #DADADA;
+}
+
+blockquote {
+  margin: 30px 0;
+  font-size: 1.4375rem;
+  line-height: 1.5em;
+  color: #505050;
+  text-align: center;
+  font-style: italic;
+}
+
+table {
+  width: 100%;
+  margin: 30px 0;
+  border-collapse: collapse;
+}
+
+table, td, th {
+  border: 1px solid #DADADA;
+  text-align: left;
+}
+
+th {
+  font-weight: 800;
+}
+
+th, td {
+  padding: 15px;
+}
+
+figure {
+  margin: 30px 0;
+}
+figure img {
+  margin: 0;
+}
+
+figcaption {
+  margin-top: 10px;
+  color: #6a6a6a;
+  font-size: 16px;
+}
+
+pre {
+  display: block;
+  margin: 0 0 40px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #DADADA;
+  overflow: auto;
+  border-radius: 3px;
+}
+pre code {
+  position: static;
+  padding: 0;
+  border: none;
+  line-height: 1.5em;
+}
+
+code {
+  position: relative;
+  top: -0.2em;
+  padding: 3px;
+  font-family: Courier New, Courier, monospace;
+  font-size: 0.8854166667rem;
+  color: #282828;
+  line-height: 1em;
+  pointer-events: none;
+  border: 1px solid #DADADA;
+  border-radius: 3px;
+}
+
+em,
+i,
+.italic {
+  font-style: italic;
+}
+
+strong,
+b,
+.bold {
+  font-weight: 800;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  margin: 30px 0;
+}
+
+.header {
+  height: 20em;
+  background-image: url("/images/header_bg.jpg");
+  background-size: cover;
+  background-position: bottom;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+.header h1 {
+  color: white;
+  font-size: 2.5rem;
+  text-shadow: 1px 1px 2px #999;
+  padding-right: 1rem;
+  margin-bottom: 0;
+}
+
+.navigation {
+  box-shadow: 0 5px 5px 1px #DDD;
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1.5em 0;
+}
+.navigation > ul {
+  margin: 0;
+  width: 60rem;
+  display: flex;
+  font-size: 1.5em;
+}
+.navigation > ul li {
+  list-style: none;
+  margin: 0;
+}
+.navigation > ul a {
+  text-decoration: none;
+}
+.navigation .languageSwitcher:hover ul {
+  display: block;
+}
+.navigation .languageSwitcher {
+  font-size: 0.7em;
+  position: absolute;
+  right: 1em;
+}
+.navigation .languageSwitcher ul {
+  display: none;
+  position: absolute;
+  bottom: -3em;
+  margin: 0;
+}
+.navigation .languageSwitcher ul:hover {
+  display: block;
+}
+
+.footer ul {
+  display: flex;
+  justify-content: center;
+  margin: 2em 0 0 0;
+  padding: 0;
+}
+.footer ul li {
+  list-style: none;
+}
+.footer img {
+  width: 2em;
+}
+
+.articleIndex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.articleIndex :nth-child(odd) {
+  flex-direction: row-reverse;
+}
+.articleIndex .articleTeaser {
+  width: 60rem;
+  min-height: 15rem;
+  margin-bottom: 2em;
+  box-shadow: 5px 5px 10px 5px #CCC;
+  display: flex;
+}
+.articleIndex .articleTeaser > * {
+  flex: 1;
+}
+@media (max-width: 600px) {
+  .articleIndex .articleTeaser {
+    width: 100%;
+    flex-direction: column;
+  }
+  .articleIndex .articleTeaser .teaserImg {
+    height: 15rem;
+  }
+  .articleIndex .articleTeaser > * {
+    flex: initial;
+  }
+}
+.articleIndex .articleTeaser h2 {
+  font-size: 1.2rem;
+}
+.articleIndex .articleTeaser .teaserImg {
+  background-size: cover;
+}
+.articleIndex .articleTeaser .excerpt > * {
+  padding: 1em;
+}
+.articleIndex .articleTeaser .postedOn {
+  font-size: 0.7em;
+  color: #666;
+  text-align: right;
+  margin: 0;
+}
+.articleIndex .articleTeaser h2 {
+  margin-top: 0;
+}
+
+.articlePage .content {
+  margin: auto;
+  max-width: 60rem;
+}
+.articlePage .content .postedOn {
+  font-size: 0.8em;
+  color: #666;
+  text-align: right;
+  margin: 0;
+}
+
+.zoomable {
+  display: block;
+  margin: auto;
+  max-height: 10em;
+  max-width: 10em;
+  cursor: zoom-in;
+  float: left;
+  margin: 1em 1em 1em 0;
+}
+.zoomable.odd {
+  float: right;
+  margin: 1em 0 1em 1em;
+}
+.zoomable.open {
+  float: none;
+  margin: 1em 0;
+  max-height: inherit;
+  max-width: 100%;
+  cursor: zoom-out;
+}
+
+/*# sourceMappingURL=style.css.map */
