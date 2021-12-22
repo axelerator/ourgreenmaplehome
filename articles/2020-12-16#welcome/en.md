@@ -8,3 +8,5 @@ Compared to other languages like JavaScript or Ruby it seems like decoding JSON 
 So today I'd like to convince you that it's not *that* complicated after all and that the additional complexity is well worth it.
 
 At the end of the coding session we ended up with a JSON decoder that looked like this:
+
+![eine wand](wand.jpg "tags::title")
