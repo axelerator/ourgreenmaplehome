@@ -1,14 +1,17 @@
 module Page.Language_.Slug_ exposing (Data, Model, Msg, RouteParams, page)
 
 import Article exposing (Article, ArticleContent, ArticleMetaData, articleMetaData, articles, languageFromString, languageToString)
+import Browser.Navigation
 import DataSource exposing (DataSource)
 import Date
 import Head
 import Head.Seo as Seo
 import Html exposing (Html, div, h1, img, li, p, text)
 import Html.Attributes as Attr exposing (class, src)
+import Html.Events exposing (onClick)
 import Language exposing (Language, otherLanguages)
 import List
+import List.Extra exposing (find)
 import Markdown exposing (toHtml)
 import Markdown.Block as Block
 import Markdown.Html
@@ -17,6 +20,7 @@ import Markdown.Renderer
 import Page exposing (Page, StaticPayload)
 import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
+import Path exposing (Path)
 import Route exposing (Route(..))
 import Shared exposing (link, navigation)
 import Url exposing (percentEncode)
@@ -24,25 +28,68 @@ import View exposing (View)
 
 
 type alias Model =
-    ()
+    { zoomables : List Zoomable }
 
 
-type alias Msg =
-    Never
+type alias Zoomable =
+    { id : String
+    , open : Bool
+    }
+
+
+type Msg
+    = ToggleZoomable String
 
 
 type alias RouteParams =
     { language : String, slug : String }
 
 
-page : Page RouteParams Data
+page : Page.PageWithState RouteParams Data Model Msg
 page =
     Page.prerender
         { head = head
         , routes = routes
         , data = data
         }
-        |> Page.buildNoState { view = view }
+        |> Page.buildWithLocalState
+            { view = view
+            , init = init
+            , update = update
+            , subscriptions = subscriptions
+            }
+
+
+init : Maybe PageUrl -> Shared.Model -> StaticPayload Data RouteParams -> ( Model, Cmd Msg )
+init _ _ _ =
+    ( { zoomables = [ { id = "z1", open = False } ] }
+    , Cmd.none
+    )
+
+
+update : PageUrl -> Maybe Browser.Navigation.Key -> Shared.Model -> StaticPayload Data RouteParams -> Msg -> Model -> ( Model, Cmd Msg )
+update _ _ _ _ msg model =
+    case msg of
+        ToggleZoomable zoomableId ->
+            let
+                updateZoomable z =
+                    if z.id == zoomableId then
+                        { z | open = not z.open }
+
+                    else
+                        z
+
+                updatedZoomables =
+                    List.map updateZoomable model.zoomables
+            in
+            ( { model | zoomables = updatedZoomables }
+            , Cmd.none
+            )
+
+
+subscriptions : Maybe PageUrl -> RouteParams -> Path -> Model -> Sub Msg
+subscriptions _ _ _ _ =
+    Sub.none
 
 
 routes : DataSource (List RouteParams)
@@ -109,9 +156,10 @@ type alias Data =
 view :
     Maybe PageUrl
     -> Shared.Model
+    -> Model
     -> StaticPayload Data RouteParams
     -> View Msg
-view _ _ static =
+view _ _ model static =
     let
         requestedLangName =
             static.routeParams.language
@@ -127,7 +175,7 @@ view _ _ static =
     , body =
         case mbContent of
             Just c ->
-                [ div [ class "articlePage" ] <| body static.data c static currentLanguage ]
+                [ div [ class "articlePage" ] <| body static.data c static currentLanguage model ]
 
             Nothing ->
                 [ text "not found" ]
@@ -142,8 +190,8 @@ markdownView localImagesFolder markdown =
         |> Result.andThen (Markdown.Renderer.render (customHtmlRenderer localImagesFolder))
 
 
-body : Article -> ArticleContent -> StaticPayload Data RouteParams -> Language -> List (Html Msg)
-body article content static currentLanguage =
+body : Article -> ArticleContent -> StaticPayload Data RouteParams -> Language -> Model -> List (Html Msg)
+body article content static currentLanguage model =
     let
         otherLanguages =
             List.map (\l -> ( l, Shared.toArticleRoute l article ))
@@ -162,7 +210,9 @@ body article content static currentLanguage =
             , text <| Date.format "EEEE, ddd MMMM y" article.metaData.published
             ]
         , h1 [] [ text content.title ]
-        , img [ src <| Article.teaserImgPath article ] []
+
+        --, img [ src <| Article.teaserImgPath article ] []
+        , showZoomable model.zoomables "z1"
         , case markdownView localImagesFolder content.body of
             Err e ->
                 text e
@@ -171,6 +221,20 @@ body article content static currentLanguage =
                 div [ class "articleBody" ] html
         ]
     ]
+
+
+showZoomable zoomables zoomableId =
+    case find (\{ id } -> id == zoomableId) zoomables of
+        Just zoomable ->
+            img
+                [ src "/images/articles/2020-12-16%23welcome/images/wand.jpg"
+                , onClick (ToggleZoomable zoomableId)
+                , Attr.classList [ ( "zoomable", True ), ( "open", zoomable.open ) ]
+                ]
+                []
+
+        Nothing ->
+            text ""
 
 
 customHtmlRenderer : String -> Markdown.Renderer.Renderer (Html msg)

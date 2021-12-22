@@ -122,3 +122,15 @@ $content-width: 60rem
       color: $color-text-subdued
       text-align: right
       margin: 0
+
+.zoomable
+  display: block
+  margin: auto
+  max-height: 10em
+  max-width: 10em
+  cursor: zoom-in
+  &.open
+    max-height: inherit
+    max-width: inherit
+    cursor: zoom-out
+

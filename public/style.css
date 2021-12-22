@@ -454,4 +454,17 @@ img {
   margin: 0;
 }
 
+.zoomable {
+  display: block;
+  margin: auto;
+  max-height: 10em;
+  max-width: 10em;
+  cursor: zoom-in;
+}
+.zoomable.open {
+  max-height: inherit;
+  max-width: inherit;
+  cursor: zoom-out;
+}
+
 /*# sourceMappingURL=style.css.map */
