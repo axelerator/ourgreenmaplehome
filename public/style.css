@@ -460,10 +460,18 @@ img {
   max-height: 10em;
   max-width: 10em;
   cursor: zoom-in;
+  float: left;
+  margin: 1em 1em 1em 0;
+}
+.zoomable.odd {
+  float: right;
+  margin: 1em 0 1em 1em;
 }
 .zoomable.open {
+  float: none;
+  margin: 1em 0;
   max-height: inherit;
-  max-width: inherit;
+  max-width: 100%;
   cursor: zoom-out;
 }
 

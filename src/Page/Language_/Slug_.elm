@@ -34,6 +34,9 @@ type alias Model =
 type alias Zoomable =
     { id : String
     , open : Bool
+    , src : String
+    , alt : String
+    , odd : Bool
     }
 
 
@@ -60,11 +63,92 @@ page =
             }
 
 
+zoombableIdFromTitle : Maybe String -> Maybe String
+zoombableIdFromTitle mbTitle =
+    case mbTitle of
+        Nothing ->
+            Nothing
+
+        Just title ->
+            case String.split "::" title of
+                mbZoomableId :: _ ->
+                    case String.split "_" mbZoomableId of
+                        "zoomable" :: i :: [] ->
+                            Just i
+
+                        _ ->
+                            Nothing
+
+                _ ->
+                    Nothing
+
+
 init : Maybe PageUrl -> Shared.Model -> StaticPayload Data RouteParams -> ( Model, Cmd Msg )
-init _ _ _ =
-    ( { zoomables = [ { id = "z1", open = False } ] }
+init _ _ static =
+    let
+        article =
+            static.data
+
+        requestedLangName =
+            static.routeParams.language
+
+        currentLanguage =
+            languageFromString requestedLangName
+
+        mbContent =
+            findArticleContent currentLanguage article
+
+        zoomables =
+            case mbContent of
+                Nothing ->
+                    []
+
+                Just content ->
+                    case Markdown.Parser.parse content.body of
+                        Err _ ->
+                            []
+
+                        Ok blocks ->
+                            let
+                                fb inline soFar =
+                                    case inline of
+                                        Block.Image src mbTitle _ ->
+                                            case zoombableIdFromTitle mbTitle of
+                                                Just id ->
+                                                    { id = id
+                                                    , open = False
+                                                    , src = absoluteImagePath article.metaData.folderName src
+                                                    , alt = "TBD"
+                                                    , odd =
+                                                        case List.head soFar of
+                                                            Just prev ->
+                                                                not prev.odd
+
+                                                            Nothing ->
+                                                                True
+                                                    }
+                                                        :: soFar
+
+                                                Nothing ->
+                                                    soFar
+
+                                        _ ->
+                                            soFar
+                            in
+                            Block.inlineFoldl fb [] blocks
+    in
+    ( { zoomables = zoomables }
     , Cmd.none
     )
+
+
+
+-- TBD: leave absolute if starts with a slash
+
+
+absoluteImagePath : String -> String -> String
+absoluteImagePath articleFolder filename =
+    String.join "/" [ "", "images", "articles", percentEncode articleFolder, "images", filename ]
 
 
 update : PageUrl -> Maybe Browser.Navigation.Key -> Shared.Model -> StaticPayload Data RouteParams -> Msg -> Model -> ( Model, Cmd Msg )
@@ -153,6 +237,12 @@ type alias Data =
     Article
 
 
+findArticleContent : Language -> Article -> Maybe ArticleContent
+findArticleContent language article =
+    List.head
+        (List.filter (\c -> c.language == language) article.content)
+
+
 view :
     Maybe PageUrl
     -> Shared.Model
@@ -168,8 +258,7 @@ view _ _ model static =
             languageFromString requestedLangName
 
         mbContent =
-            List.head
-                (List.filter (\c -> c.language == currentLanguage) static.data.content)
+            findArticleContent currentLanguage static.data
     in
     { title = "an article"
     , body =
@@ -182,12 +271,12 @@ view _ _ model static =
     }
 
 
-markdownView : String -> String -> Result String (List (Html Msg))
-markdownView localImagesFolder markdown =
+markdownView : List Zoomable -> String -> String -> Result String (List (Html Msg))
+markdownView zoomables localImagesFolder markdown =
     markdown
         |> Markdown.Parser.parse
         |> Result.mapError (\error -> error |> List.map Markdown.Parser.deadEndToString |> String.join "\n")
-        |> Result.andThen (Markdown.Renderer.render (customHtmlRenderer localImagesFolder))
+        |> Result.andThen (Markdown.Renderer.render (customHtmlRenderer zoomables localImagesFolder))
 
 
 body : Article -> ArticleContent -> StaticPayload Data RouteParams -> Language -> Model -> List (Html Msg)
@@ -212,8 +301,7 @@ body article content static currentLanguage model =
         , h1 [] [ text content.title ]
 
         --, img [ src <| Article.teaserImgPath article ] []
-        , showZoomable model.zoomables "z1"
-        , case markdownView localImagesFolder content.body of
+        , case markdownView model.zoomables localImagesFolder content.body of
             Err e ->
                 text e
 
@@ -227,18 +315,22 @@ showZoomable zoomables zoomableId =
     case find (\{ id } -> id == zoomableId) zoomables of
         Just zoomable ->
             img
-                [ src "/images/articles/2020-12-16%23welcome/images/wand.jpg"
+                [ src zoomable.src
                 , onClick (ToggleZoomable zoomableId)
-                , Attr.classList [ ( "zoomable", True ), ( "open", zoomable.open ) ]
+                , Attr.classList
+                    [ ( "zoomable", True )
+                    , ( "open", zoomable.open )
+                    , ( "odd", zoomable.odd )
+                    ]
                 ]
                 []
 
         Nothing ->
-            text ""
+            text <| String.join "-" <| List.map .id zoomables
 
 
-customHtmlRenderer : String -> Markdown.Renderer.Renderer (Html msg)
-customHtmlRenderer localImagesFolder =
+customHtmlRenderer : List Zoomable -> String -> Markdown.Renderer.Renderer (Html Msg)
+customHtmlRenderer zoomables localImagesFolder =
     { heading =
         \{ level, children } ->
             case level of
@@ -281,7 +373,7 @@ customHtmlRenderer localImagesFolder =
                 Nothing ->
                     Html.a [ Attr.href link.destination ] content
     , image =
-        renderImage localImagesFolder
+        renderImage zoomables localImagesFolder
     , text =
         Html.text
     , unorderedList =
@@ -374,22 +466,17 @@ customHtmlRenderer localImagesFolder =
     }
 
 
-renderImage localImagesFolder imageInfo =
+renderImage : List Zoomable -> String -> { b | src : String, title : Maybe String, alt : String } -> Html Msg
+renderImage zoomables localImagesFolder imageInfo =
     let
         src =
             String.join "/" [ localImagesFolder, imageInfo.src ]
     in
     case imageInfo.title of
         Just title ->
-            case String.split "::" title of
-                tags :: actualTitle ->
-                    Html.img
-                        [ Attr.src src
-                        , Attr.alt imageInfo.alt
-                        , Attr.title <| String.join "" actualTitle
-                        , Attr.class tags
-                        ]
-                        []
+            case zoombableIdFromTitle imageInfo.title of
+                Just zoomableId ->
+                    showZoomable zoomables zoomableId
 
                 _ ->
                     Html.img
